@@ -1,0 +1,83 @@
+CREATE DATABASE minions;
+use minions;
+
+CREATE TABLE minions (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(47),
+    age INT
+);
+
+CREATE TABLE towns( 
+id int primary KEY AUTO_INCREMENT,
+name VARCHAR(47)
+);
+
+-- 2
+
+ALTER table minions
+add COLUMN town_id int not null,
+add CONSTRAINT fk_minions_towns
+FOREIGN KEY minions (town_id)
+REFERENCES towns(id);
+
+-- 3
+
+INSERT INTO `towns` (`id`, `name`)
+VALUES (1, 'Sofia'), (2, 'Plovdiv'), (3, 'Varna');
+
+INSERT INTO `minions` (`id`, `name`, `age`, `town_id`)
+VALUES (1, 'Kevin', 22, 1),
+	   (2, 'Bob', 15, 3), 
+	   (3, 'Steward', NULL, 2);
+-- 4
+
+TRUNCATE TABLE minions;
+
+-- 5
+
+DROP TABLE minions;
+DROP TABLE towns;
+
+-- 6
+CREATE TABLE `people`(
+	`id` INT PRIMARY KEY AUTO_INCREMENT,
+    `name` VARCHAR(200) NOT NULL,
+    `picture` BLOB, 
+    `height` DOUBLE,
+    `weight` DOUBLE,
+    `gender` ENUM ('m', 'f') NOT NULL,
+    `birthdate` DATE NOT NULL,
+    `biography` TEXT
+);
+
+INSERT INTO people (name, gender, birthdate)
+VALUES
+('test', 'm', DATE(now())),
+('testa', 'f', DATE(now())),
+('test', 'm', DATE(now())),
+('testa', 'f', DATE(now())),
+('test', 'm', DATE(now()));
+
+-- 7
+
+CREATE TABLE users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(30) NOT NULL,
+    password VARCHAR(26) NOT NULL,
+    profil_picture BLOB,
+    last_login_time DATETIME,
+    is_deleted BOOLEAN
+);
+ 
+ INSERT INTO users(username, password)
+values ('test', 'test'),
+('test', 'test'),
+('test', 'test'),
+('test', 'test'),
+('test', 'test');
+
+-- 8
+ALTER TABLE users
+DROP PRIMARY KEY,
+ADD CONSTRAINT pk_users2
+PRIMARY KEY users(id, username);

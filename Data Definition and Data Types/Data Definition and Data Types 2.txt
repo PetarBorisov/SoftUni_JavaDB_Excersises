@@ -1,0 +1,77 @@
+-- 9
+ALTER TABLE users
+CHANGE COLUMN last_login_time 
+last_login_time DATETIME DEFAULT NOW();
+
+-- 10
+ALTER TABLE users
+Drop PRIMARY KEY,
+ADD CONSTRAINT pk_users
+PRIMARY KEY users(id),
+CHANGE column username
+username varchar(30) unique;
+
+-- 11
+CREATE DATABASE Movies;
+
+CREATE TABLE `directors` (
+    `id` INT PRIMARY KEY AUTO_INCREMENT,
+    `director_name` VARCHAR(50) NOT NULL, 
+    `notes` TEXT
+); 
+ 
+INSERT INTO `directors`(`director_name`, `notes`)
+VALUES 
+('TestName1', 'TestNotes'),
+('TestName2', 'TestNotes'),
+('TestName3', 'TestNotes'),
+('TestName4', 'TestNotes'),
+('TestName5', 'TestNotes');
+ 
+CREATE TABLE `genres` (
+    `id` INT PRIMARY KEY AUTO_INCREMENT , 
+    `genre_name` VARCHAR(20) NOT NULL,
+    `notes` TEXT
+);
+ 
+INSERT INTO `genres`(`genre_name`, `notes`)
+VALUES 
+('TestName1', 'TestNotes'),
+('TestName2', 'TestNotes'),
+('TestName3', 'TestNotes'),
+('TestName4', 'TestNotes'),
+('TestName5', 'TestNotes');
+ 
+CREATE TABLE `categories` (
+    `id` INT PRIMARY KEY AUTO_INCREMENT,
+    `category_name` VARCHAR(20) NOT NULL,
+    `notes` TEXT
+);
+ 
+INSERT INTO `categories`(`category_name`, `notes`)
+VALUES 
+('TestName1', 'TestNotes'),
+('TestName2', 'TestNotes'),
+('TestName3', 'TestNotes'),
+('TestName4', 'TestNotes'),
+('TestName5', 'TestNotes');
+ 
+CREATE TABLE `movies` (
+    `id` INT PRIMARY KEY AUTO_INCREMENT,
+    `title` VARCHAR(40) NOT NULL, 
+    `director_id` INT,
+    `copyright_year` INT,
+    `length` INT,
+    `genre_id` INT,
+    `category_id` INT,
+    `rating` DOUBLE, 
+    `notes` TEXT
+);
+ 
+INSERT INTO `movies` (`title`)
+VALUES 
+('TestMovie1'),
+('TestMovie2'),
+('TestMovie3'),
+('TestMovie4'),
+('TestMovie5');
