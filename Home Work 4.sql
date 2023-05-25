@@ -147,3 +147,48 @@ FROM
 GROUP BY `department_id`
 HAVING `max_salary` NOT BETWEEN 30000 AND 70000
 ORDER BY `department_id` ASC;
+
+-- 15
+SELECT 
+    COUNT(*) AS 'count'
+FROM
+    `employees`
+WHERE
+    `manager_id` IS NULL;
+    
+-- 16 
+SELECT `department_id`,
+# намирам третата най-висока заплата
+    (SELECT DISTINCT `salary` FROM `employees` e
+     WHERE e.`department_id` = employees.`department_id`
+     ORDER BY `salary` DESC
+     LIMIT 1 OFFSET 2
+       ) AS 'third_highest_salary'
+FROM `employees`
+GROUP BY `department_id`
+HAVING `third_highest_salary` IS NOT NULL
+ORDER BY `department_id` ASC;
+
+-- 17
+SELECT 
+    `first_name`, `last_name`, `department_id`
+FROM
+    employees
+WHERE
+    salary > (SELECT 
+            AVG(`salary`)
+        FROM
+            `employees` e
+        WHERE
+            e.department_id = employees.`department_id`)
+ORDER BY department_id , employee_id
+LIMIT 10;
+
+-- 18
+SELECT 
+    `department_id`, SUM(`salary`) AS 'total_salary'
+FROM
+    `employees`
+GROUP BY `department_id`
+ORDER BY `department_id`;
+    
