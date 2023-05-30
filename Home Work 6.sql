@@ -19,6 +19,18 @@ FROM
 ORDER BY e.first_name , e.last_name
 LIMIT 5;
 
+-- 3
+SELECT 
+    employee_id, first_name, last_name, d.name
+FROM
+    employees AS e
+        JOIN
+    departments AS d ON e.department_id = d.department_id
+WHERE
+    d.name = 'Sales'
+ORDER BY e.employee_id DESC
+LIMIT 5;
+
 -- 4
 SELECT 
     e.employee_id,
@@ -36,7 +48,7 @@ LIMIT 5;
 
 -- 5
 SELECT 
-    e.employee_id, e.first_name, ep.project_id
+    e.employee_id, e.first_name
 FROM
     employees AS e
         LEFT JOIN
@@ -90,6 +102,19 @@ WHERE
     e.employee_id = 24
 ORDER BY p.name;
 
+-- 9
+SELECT 
+    e.employee_id, e.first_name, e.manager_id, m.first_name
+FROM
+    employees AS e
+        JOIN
+    employees AS m ON e.manager_id = m.employee_id
+WHERE
+    e.manager_id IN (3 , 7)
+ORDER BY e.first_name
+LIMIT 5;
+
+
 -- 10
 SELECT e.employee_id,
 concat_ws(' ',e.first_name,e.last_name)as employee_name,
@@ -130,3 +155,13 @@ WHERE
 ORDER BY p.elevation DESC;
 
 -- 13
+SELECT 
+    c.country_code, COUNT(mc.mountain_id) AS 'mountain_range'
+FROM
+    `countries` AS c
+        JOIN
+    `mountains_countries` AS mc ON c.country_code = mc.country_code
+WHERE
+    c.country_name IN ('United States' , 'Russia', 'Bulgaria')
+GROUP BY c.country_code
+ORDER BY `mountain_range` DESC;
