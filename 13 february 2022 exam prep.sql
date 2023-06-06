@@ -61,6 +61,22 @@ CONSTRAINT fk_orders_product_products FOREIGN KEY (product_id)
 REFERENCES products(id)
 );
 
+-- 2
+INSERT INTO reviews(content,picture_url,published_at,rating)
+SELECT left(p.`description`,15),(reverse(p.name)),DATE('2010/10/10'),p.price / 8
+FROM products p
+WHERE p.id >=5;
+
+-- 3
+UPDATE products p
+SET p.quantity_in_stock = p.quantity_in_stock - 5
+WHERE p.quantity_in_stock BETWEEN 60 AND 70;
+
+-- 4
+DELETE c FROM customers c
+LEFT JOIN orders o on  c.id = o.customer_id
+WHERE o.customer_id is NULL;
+
 -- 5
 SELECT * FROM categories as c
 ORDER BY c.name DESC;
