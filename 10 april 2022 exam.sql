@@ -87,5 +87,47 @@ SET SQL_SAFE_UPDATES = 0;
 SELECT * FROM countries
 ORDER BY currency DESC,id;
 
+-- 6
+SELECT mi.id,m.title,mi.runtime,mi.budget,mi.release_date FROM movies_additional_info as mi
+JOIN movies as m ON m.id = mi.id
+WHERE year(release_date) BETWEEN 1996 AND 1999
+ORDER BY mi.runtime,mi.id
+LIMIT 20;
+
+-- 7
+SELECT concat(a.first_name,' ',a.last_name) as 'fill_name',concat(reverse(a.last_name),length(a.last_name),'@cast.com') as 'email',(2022 - year(a.birthdate)) as age, a.height 
+FROM actors as a
+LEFT JOIN movies_actors as m ON  a.id = m.actor_id
+WHERE m.movie_id is NULL
+ORDER BY a.height ASC;
+
+-- 8
+SELECT c.name,COUNT(m.id) as 'movies_count'  FROM movies as m
+JOIN countries as c ON m.country_id = c.id
+GROUP BY c.name
+HAVING movies_count >= 7
+ORDER BY c.name DESC;
+
+-- 9
+SELECT m.title,
+(CASE 
+WHEN mi.rating <= 4 THEN 'poor'
+WHEN mi.rating <= 7 THEN 'good'
+ELSE 'excellent'
+END) as 'rating',
+IF(mi.has_subtitles, 'english', '-') subtitles,
+mi.budget
+ FROM movies_additional_info as mi
+JOIN movies as m ON  mi.id  = m.movie_info_id
+ORDER BY budget DESC;
+
+
+-- 10
+
+
+
+
+
+
 
 
