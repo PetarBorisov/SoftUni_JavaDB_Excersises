@@ -88,3 +88,91 @@ SELECT first_name,last_name,age,salary,happiness_level FROM employees
 ORDER BY salary,id;
 
 -- 6
+SELECT t.name as 'team_name',a.name as 'address_name',length(a.name) as 'count_of_characters' FROM teams as t
+JOIN offices as o ON o.id = t.office_id
+JOIN addresses as a ON  a.id = o.address_id 
+WHERE o.website is NOT NULL
+ORDER BY `team_name`,`address_name`;
+
+-- 7
+SELECT c.name,COUNT(g.id) as 'games_count',round(avg(g.budget),2) as 'avg_budget',MAX(g.rating) as 'max_rating' FROM games as g
+JOIN games_categories as gc ON gc.game_id = g.id
+JOIN categories as c ON c.id = gc.category_id 
+GROUP BY c.id
+HAVING `max_rating` >= 9.5
+ORDER BY `games_count`DESC,c.name;
+
+-- 8
+SELECT g.name,g.release_date,CONCAT(substring(g.`description`,1,10),'...') as 'summary',
+CASE
+    WHEN month(g.release_date) BETWEEN 1 and 3 then 'Q1' 
+    WHEN month(g.release_date) BETWEEN 4 and 6 then 'Q2' 
+    WHEN month(g.release_date) BETWEEN 7 and 9 then 'Q3'
+    WHEN month(g.release_date) BETWEEN 10 and 12 then 'Q4'
+    END as 'quarter',
+    t.name as 'team_name'
+ FROM games as g
+ JOIN teams as t on t.id = g.team_id
+ WHERE g.name LIKE '%2' AND month(g.release_date) % 2 = 0 AND year(g.release_date) = '2022'
+ ORDER BY `quarter`;
+
+-- 9
+SELECT 
+	g.`name`, 
+    CASE
+    WHEN g.budget < 50000 then 'Normal budget'
+    ELSE 'Insufficient budget'
+    END
+    AS 'budget_level',
+    t.`name` as 'team_name', 
+    a.`name` as 'address_name '
+FROM games as g
+JOIN teams as t on t.id = g.team_id
+JOIN offices as o on o.id = t.office_id
+JOIN addresses as a on a.id=o.address_id
+left JOIN games_categories as gc on gc.game_id = g.id
+WHERE g.release_date is Null and gc.category_id is NULL
+ORDER BY g.`name`;
+
+-- 10
+DELIMITER $$
+CREATE FUNCTION udf_game_info_by_name (game_name VARCHAR (20)) 
+RETURNS TEXT
+DETERMINISTIC
+BEGIN
+	DECLARE info VARCHAR (255);
+	DECLARE team_name VARCHAR (40);
+	DECLARE address_text VARCHAR (50);
+    
+    SET team_name := (SELECT t.`name`
+        	FROM teams AS t 
+        	JOIN games AS g 
+        	ON g.team_id = t.id 
+        	WHERE g.`name` = game_name);
+            
+	SET address_text := (SELECT a.`name`
+        	FROM addresses AS a
+        	JOIN offices AS o
+        	ON a.id = o.address_id
+        	JOIN teams AS t
+        	ON o.id = t.office_id
+        	WHERE t.`name` = team_name);
+    
+  	SET info := concat_ws(' ', 'The', game_name, 'is developed by a', team_name, 'in an office with an address', address_text);
+  	RETURN info;
+
+END $$
+
+
+-- 11
+CREATE PROCEDURE udp_update_budget (min_game_rating FLOAT)
+BEGIN
+	UPDATE games AS g
+	LEFT JOIN games_categories AS c
+    	ON g.id = c.game_id
+    	SET g.budget = g.budget + 100000, 
+		g.release_date = adddate(g.release_date, INTERVAL 1 YEAR)
+	WHERE c.category_id IS NULL 
+		AND g.release_date IS NOT NULL 
+		AND g.rating > min_game_rating;
+END
