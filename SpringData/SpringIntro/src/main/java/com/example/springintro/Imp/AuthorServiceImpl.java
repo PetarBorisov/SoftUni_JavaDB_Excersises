@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 @Service
 public class AuthorServiceImpl implements AuthorService {
@@ -46,5 +47,17 @@ public class AuthorServiceImpl implements AuthorService {
 
         return authorRepository.findById(randomId)
                 .orElse(null);
+    }
+
+    @Override
+    public List<String> getAllAuthorsOrderByCountOfTheirBooks() {
+        return authorRepository
+                .findAllByBooksSizeDESC()
+                .stream()
+                .map(author -> String.format("%s %s %d",
+                        author.getFirstName(),
+                        author.getLastName(),
+                        author.getBooks().size()))
+                .collect(Collectors.toList());
     }
 }
