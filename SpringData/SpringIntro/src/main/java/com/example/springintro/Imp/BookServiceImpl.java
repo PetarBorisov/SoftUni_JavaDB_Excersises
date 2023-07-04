@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -46,6 +47,33 @@ public class BookServiceImpl implements BookService {
 
                     bookRepository.save(book);
                 });
+    }
+
+    @Override
+    public List<Book> findAllBooksAfterYear(int year) {
+        return bookRepository
+                .findAllByReleaseDateAfter(LocalDate.of(year,12,31));
+    }
+
+    @Override
+    public List<String> findAllAuthorsWithBooksWithReleasesDataBeforeYear(int year) {
+    return bookRepository
+            .findAllByReleaseDateBefore(LocalDate.of(year,1,1))
+            .stream()
+            .map(book -> String.format("%s %s",book.getAuthor().getFirstName(),
+                    book.getAuthor().getLastName()))
+            .distinct()
+            .collect(Collectors.toList());
+
+    }
+
+    @Override
+    public List<String> findAllBooksByAuthorFirstAndLastNameOrderByReleaseDate(String firstName, String lastName) {
+    return bookRepository.findAllByAuthor_FirstNameAndAuthor_LastNameOrderByReleaseDateDescTitle(firstName,lastName)
+             .stream()
+             .map(book -> String.format("%s %s %d" ,book.getTitle()
+                     ,book.getReleaseDate(),book.getCopies()
+                     )).collect(Collectors.toList());
     }
 
     private Book createBookFromInfo(String[] bookInfo) {
