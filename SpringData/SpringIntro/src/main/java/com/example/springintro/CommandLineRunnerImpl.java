@@ -1,5 +1,6 @@
 package com.example.springintro;
 
+import com.example.springintro.Entity.Book;
 import com.example.springintro.service.AuthorService;
 import com.example.springintro.service.BookService;
 import com.example.springintro.service.CategoryService;
@@ -30,9 +31,42 @@ public class CommandLineRunnerImpl implements CommandLineRunner{
     @Override
     public void run(String... args) throws Exception {
 
+   seedData();
+      // printAllBooksAfter2000(2000);
+     //   printAllAuthorsNamesWitReleaseDateBeforeYear(1990);
+      //  printAllAuthorsAndNumberOfTheirBooks();
+        printAllBooksByAuthorNameOrderByReleaseDate("George", "Powell");
+    }
 
+    private void printAllBooksByAuthorNameOrderByReleaseDate(String firstName, String lastName) {
+        bookService.findAllBooksByAuthorFirstAndLastNameOrderByReleaseDate(firstName,lastName )
+                .forEach(System.out::println);
+    }
+
+    private void printAllAuthorsAndNumberOfTheirBooks() {
+        authorService.getAllAuthorsOrderByCountOfTheirBooks()
+                .forEach(System.out::println);
+    }
+
+    private void printAllAuthorsNamesWitReleaseDateBeforeYear(int year) {
+        bookService.
+                findAllAuthorsWithBooksWithReleasesDataBeforeYear(year)
+                .forEach(System.out::println);
+    }
+
+    private void printAllBooksAfter2000(int year) {
+        bookService
+                .findAllBooksAfterYear(year)
+                .stream()
+                .map(Book::getTitle)
+                .forEach(System.out::println);
+
+    }
+
+    private void seedData() throws IOException {
         categoryService.seedCategories();
         authorService.seedAuthors();
         bookService.seedBooks();
     }
+
 }
